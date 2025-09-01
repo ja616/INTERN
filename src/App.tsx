@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowRight, Code, Shield, Cloud, Brain, User, Mail, Phone, GraduationCap, Calendar, Users } from 'lucide-react';
+import { ArrowRight, Code, Shield, Cloud, Brain, User, Mail, Phone, GraduationCap, Calendar, Users, MessageSquare } from 'lucide-react';
 import { RegistrationForm } from './components/RegistrationForm';
 import { Chatbot } from './components/Chatbot';
 
@@ -15,7 +15,7 @@ interface Domain {
 }
 
 function App() {
-  const [currentView, setCurrentView] = useState<'home' | 'domain' | 'register'>('home');
+  const [currentView, setCurrentView] = useState<'home' | 'domain' | 'register' | 'domain-selection'>('home');
   const [selectedDomain, setSelectedDomain] = useState<Domain | null>(null);
 
   const handleCourseSelect = (domainId: string) => {
@@ -26,8 +26,12 @@ function App() {
     }
   };
 
-  const handleRegisterDirect = () => {
-    setCurrentView('register');
+  const handleRegisterWithDomain = (domainId: string) => {
+    const domain = domains.find(d => d.id === domainId);
+    if (domain) {
+      setSelectedDomain(domain);
+      setCurrentView('register');
+    }
   };
 
   const domains: Domain[] = [
@@ -72,6 +76,66 @@ function App() {
       image: 'https://images.pexels.com/photos/270348/pexels-photo-270348.jpeg?auto=compress&cs=tinysrgb&w=500'
     }
   ];
+
+  // Domain Selection Page for Registration
+  if (currentView === 'domain-selection') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-teal-50">
+        <nav className="bg-white shadow-sm">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center py-4">
+              <button 
+                onClick={() => setCurrentView('home')}
+                className="text-2xl font-bold text-blue-600 hover:text-blue-700 transition-colors"
+              >
+                PolyIntern
+              </button>
+            </div>
+          </div>
+        </nav>
+
+        <div className="max-w-6xl mx-auto px-4 py-12">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">Select Your Domain</h1>
+            <p className="text-xl text-gray-600">Choose the internship domain you want to register for</p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {domains.map((domain) => (
+              <div key={domain.id} className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden">
+                <div className="h-48 bg-gradient-to-br from-blue-500 to-blue-600 relative overflow-hidden">
+                  <img 
+                    src={domain.image} 
+                    alt={domain.title}
+                    className="w-full h-full object-cover opacity-20"
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-white text-center">
+                      {domain.icon}
+                      <h3 className="text-2xl font-bold mt-2">{domain.title}</h3>
+                    </div>
+                  </div>
+                </div>
+                <div className="p-6">
+                  <p className="text-gray-600 mb-4 leading-relaxed">{domain.shortDescription}</p>
+                  <button
+                    onClick={() => {
+                      setSelectedDomain(domain);
+                      setCurrentView('register');
+                    }}
+                    className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 group"
+                  >
+                    REGISTER NOW
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const DomainCard = ({ domain }: { domain: Domain }) => (
     <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden">
@@ -234,7 +298,7 @@ function App() {
           </div>
         </div>
       </div>
-      <Chatbot onCourseSelect={handleCourseSelect} onRegisterDirect={handleRegisterDirect} />
+      <Chatbot onCourseSelect={handleCourseSelect} onRegisterWithDomain={handleRegisterWithDomain} />
     </>
   );
 }
