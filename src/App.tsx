@@ -26,6 +26,10 @@ function App() {
     }
   };
 
+  const handleRegisterDirect = () => {
+    setCurrentView('register');
+  };
+
   const domains: Domain[] = [
     {
       id: 'aiml',
@@ -230,7 +234,7 @@ function App() {
           </div>
         </div>
       </div>
-      <Chatbot onCourseSelect={handleCourseSelect} />
+      <Chatbot onCourseSelect={handleCourseSelect} onRegisterDirect={handleRegisterDirect} />
     </>
   );
 }
