@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowRight, Code, Shield, Cloud, Brain, User, Mail, Phone, GraduationCap, Calendar, Users } from 'lucide-react';
 import { RegistrationForm } from './components/RegistrationForm';
+import { Chatbot } from './components/Chatbot';
 
 interface Domain {
   id: string;
@@ -16,6 +17,14 @@ interface Domain {
 function App() {
   const [currentView, setCurrentView] = useState<'home' | 'domain' | 'register'>('home');
   const [selectedDomain, setSelectedDomain] = useState<Domain | null>(null);
+
+  const handleCourseSelect = (domainId: string) => {
+    const domain = domains.find(d => d.id === domainId);
+    if (domain) {
+      setSelectedDomain(domain);
+      setCurrentView('domain');
+    }
+  };
 
   const domains: Domain[] = [
     {
@@ -211,15 +220,18 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-teal-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {domains.map((domain) => (
-            <DomainCard key={domain.id} domain={domain} />
-          ))}
+    <>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-teal-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {domains.map((domain) => (
+              <DomainCard key={domain.id} domain={domain} />
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+      <Chatbot onCourseSelect={handleCourseSelect} />
+    </>
   );
 }
 
